@@ -4,9 +4,13 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -57,10 +61,6 @@ public class TimerPanel extends JPanel implements Runnable {
     timeLabel.setOpaque(true);
     setText();
 
-    modifyButton.setIcon(new ImageIcon(new ImageIcon(getClass().getResource("/resources/edit.png")).getImage()
-        .getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH)));
-    modifyButton.setPressedIcon(new ImageIcon(new ImageIcon(getClass().getResource("/resources/edit-hover.png"))
-        .getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH)));
     modifyButton.setBorder(BorderFactory.createEmptyBorder());
     modifyButton.setContentAreaFilled(false);
     modifyButton.setBounds(0, 0, 30, 30);
@@ -92,15 +92,21 @@ public class TimerPanel extends JPanel implements Runnable {
         }
       }
     });
+    try {
+      BufferedImage image;
+      BufferedImage imageHover;
+      image = ImageIO.read(new File("./resources/edit.png"));
+      imageHover = ImageIO.read(new File("./resources/edit-hover.png"));
+      modifyButton.setIcon(
+          new ImageIcon(new ImageIcon(image).getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH)));
+      modifyButton.setPressedIcon(
+          new ImageIcon(new ImageIcon(imageHover).getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH)));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
 
-    increaseFrequencyButton.setIcon(new ImageIcon(new ImageIcon(getClass().getResource("/resources/increase.png"))
-        .getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH)));
-    increaseFrequencyButton
-        .setPressedIcon(new ImageIcon(new ImageIcon(getClass().getResource("/resources/increase-hover.png")).getImage()
-            .getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH)));
     increaseFrequencyButton.setBorder(BorderFactory.createEmptyBorder());
     increaseFrequencyButton.setContentAreaFilled(false);
-
     increaseFrequencyButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -114,15 +120,21 @@ public class TimerPanel extends JPanel implements Runnable {
         }
       }
     });
+    try {
+      BufferedImage image;
+      BufferedImage imageHover;
+      image = ImageIO.read(new File("./resources/increase.png"));
+      imageHover = ImageIO.read(new File("./resources/increase-hover.png"));
+      increaseFrequencyButton.setIcon(
+          new ImageIcon(new ImageIcon(image).getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH)));
+      increaseFrequencyButton.setPressedIcon(
+          new ImageIcon(new ImageIcon(imageHover).getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH)));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
 
-    reduceFrequencyButton.setIcon(new ImageIcon(new ImageIcon(getClass().getResource("/resources/decrease.png"))
-        .getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH)));
-    reduceFrequencyButton
-        .setPressedIcon(new ImageIcon(new ImageIcon(getClass().getResource("/resources/decrease-hover.png")).getImage()
-            .getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH)));
     reduceFrequencyButton.setBorder(BorderFactory.createEmptyBorder());
     reduceFrequencyButton.setContentAreaFilled(false);
-
     reduceFrequencyButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -136,6 +148,18 @@ public class TimerPanel extends JPanel implements Runnable {
         }
       }
     });
+    try {
+      BufferedImage image;
+      BufferedImage imageHover;
+      image = ImageIO.read(new File("./resources/decrease.png"));
+      imageHover = ImageIO.read(new File("./resources/decrease-hover.png"));
+      reduceFrequencyButton.setIcon(
+          new ImageIcon(new ImageIcon(image).getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH)));
+      reduceFrequencyButton.setPressedIcon(
+          new ImageIcon(new ImageIcon(imageHover).getImage().getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH)));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
 
     add(timeLabel);
     add(modifyButton);
