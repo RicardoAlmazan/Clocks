@@ -21,14 +21,14 @@ import javax.swing.JPanel;
 public class TimerPanel extends JPanel implements Runnable {
 
   private static final long serialVersionUID = 1L;
-  Calendar calendar;
-  SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");;
-  float timeFactor = 1;
+  private Calendar calendar;
+  private SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");;
+  private float timeFactor = 1;
 
-  JLabel timeLabel;
-  JButton modifyButton;
-  JButton increaseFrequencyButton;
-  JButton reduceFrequencyButton;
+  private JLabel timeLabel;
+  private JButton modifyButton;
+  private JButton increaseFrequencyButton;
+  private JButton reduceFrequencyButton;
 
   private volatile boolean shutdown;
 

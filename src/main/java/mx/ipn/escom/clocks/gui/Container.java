@@ -10,10 +10,10 @@ public class Container extends JFrame {
    *
    */
   private static final long serialVersionUID = 3864514692691142425L;
-  TimerPanel timer1;
-  TimerPanel timer2;
-  TimerPanel timer3;
-  TimerPanel timer4;
+  private TimerPanel timer1;
+  private TimerPanel timer2;
+  private TimerPanel timer3;
+  private TimerPanel timer4;
 
   public Container() {
     this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -23,6 +23,10 @@ public class Container extends JFrame {
     this.setResizable(false);
     this.setVisible(true);
 
+    init();
+  }
+
+  private void init() {
     Random rand = new Random();
 
     this.timer1 = new TimerPanel();
