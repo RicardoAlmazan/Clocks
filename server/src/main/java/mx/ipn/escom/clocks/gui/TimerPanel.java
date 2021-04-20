@@ -5,10 +5,14 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -30,16 +34,19 @@ public class TimerPanel extends JPanel implements Runnable {
   private JButton increaseFrequencyButton;
   private JButton reduceFrequencyButton;
 
+  private Socket cliente;
+  private DataOutputStream dataOutputStream;
+
   private volatile boolean shutdown;
 
   public TimerPanel() {
     this.calendar = Calendar.getInstance();
-    setProperties();
+    setProperties(false);
   }
 
   public TimerPanel(Integer hour, Integer minute, Integer second) {
     setTime(hour, minute, second);
-    setProperties();
+    setProperties(true);
   }
 
   private void setTime(Integer hour, Integer minute, Integer second) {
@@ -49,7 +56,7 @@ public class TimerPanel extends JPanel implements Runnable {
     this.calendar.set(Calendar.SECOND, second);
   }
 
-  private void setProperties() {
+  private void setProperties(Boolean addSendButon) {
     this.timeLabel = new JLabel();
     this.modifyButton = new JButton();
     this.increaseFrequencyButton = new JButton();
@@ -82,6 +89,7 @@ public class TimerPanel extends JPanel implements Runnable {
                 valid = true;
                 setTime(Integer.parseInt(aux[0]), Integer.parseInt(aux[1]), Integer.parseInt(aux[2]));
                 resume();
+                sendData();
                 modifyButton.setEnabled(true);
               } else
                 JOptionPane.showMessageDialog(null, "Los segundos tienen que estar en un rango entre 00 y 59.");
@@ -165,6 +173,16 @@ public class TimerPanel extends JPanel implements Runnable {
     add(modifyButton);
     add(reduceFrequencyButton);
     add(increaseFrequencyButton);
+    if (addSendButon) {
+      JButton sendDataButton = new JButton("Enviar");
+      sendDataButton.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          System.out.println(sendData());
+        }
+      });
+      add(sendDataButton);
+    }
   }
 
   private void setText() {
@@ -192,4 +210,26 @@ public class TimerPanel extends JPanel implements Runnable {
   public void resume() {
     shutdown = false;
   }
+
+  public void setCliente(Socket cliente) {
+    this.cliente = cliente;
+    try {
+      this.dataOutputStream = new DataOutputStream(cliente.getOutputStream());
+    } catch (IOException e) {
+      e.printStackTrace();
+      Logger.getLogger(TimerPanel.class.getName()).log(Level.SEVERE, null, e);
+    }
+  }
+
+  public Boolean sendData() {
+    try {
+      dataOutputStream.writeUTF(timeFormat.format(this.calendar.getTime()));
+      // dos.close();
+      return true;
+    } catch (IOException e) {
+      Logger.getLogger(TimerPanel.class.getName()).log(Level.SEVERE, null, e);
+      return false;
+    }
+  }
+
 }
