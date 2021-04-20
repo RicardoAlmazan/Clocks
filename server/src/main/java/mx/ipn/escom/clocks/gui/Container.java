@@ -67,16 +67,17 @@ public class Container extends JFrame {
         System.out.println("Esperando cliente... ");
 
         Socket cliente = server.accept();
-        System.out.println("Conexion establecida desde " + cliente.getInetAddress() + ":" + cliente.getPort());
+        System.out.println("Conexion establecida desde " + cliente.getInetAddress() + ":" + cliente.getPort() + "No. Cliente: " + count);
         if (count == 1) {
           timer2.setCliente(cliente);
         } else if (count == 2) {
           timer3.setCliente(cliente);
         } else if (count == 3) {
-          timer3.setCliente(cliente);
+          timer4.setCliente(cliente);
         } else {
           break;
         }
+        count++;
       }
     } catch (IOException e) {
       e.printStackTrace();

@@ -215,6 +215,7 @@ public class TimerPanel extends JPanel implements Runnable {
     this.cliente = cliente;
     try {
       this.dataOutputStream = new DataOutputStream(cliente.getOutputStream());
+      sendData();
     } catch (IOException e) {
       e.printStackTrace();
       Logger.getLogger(TimerPanel.class.getName()).log(Level.SEVERE, null, e);
