@@ -1,1 +1,1 @@
-java -cp target/clocks-1.0.jar mx.ipn.escom.clocks.App
+java -cp target/clocks-server-1.0.jar mx.ipn.escom.clocks.server.App

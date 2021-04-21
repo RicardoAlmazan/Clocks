@@ -1,11 +1,7 @@
-package mx.ipn.escom.clocks;
+package mx.ipn.escom.clocks.server;
 
-import mx.ipn.escom.clocks.gui.Container;
+import mx.ipn.escom.clocks.server.gui.Container;
 
-/**
- * Hello world!
- *
- */
 public class App {
     public static void main(String[] args) {
         new Container();

@@ -1,4 +1,4 @@
-package mx.ipn.escom.clocks.gui;
+package mx.ipn.escom.clocks.server.gui;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -8,7 +8,9 @@ import java.awt.image.BufferedImage;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.net.Socket;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.logging.Level;
@@ -34,7 +36,11 @@ public class TimerPanel extends JPanel implements Runnable {
   private JButton increaseFrequencyButton;
   private JButton reduceFrequencyButton;
 
-  private Socket cliente;
+  // private Socket cliente;
+
+  private InetAddress host;
+  private Integer port;
+  private DatagramSocket socket;
   private DataOutputStream dataOutputStream;
 
   private volatile boolean shutdown;
@@ -211,26 +217,36 @@ public class TimerPanel extends JPanel implements Runnable {
     shutdown = false;
   }
 
-  public void setCliente(Socket cliente) {
-    this.cliente = cliente;
-    try {
-      this.dataOutputStream = new DataOutputStream(cliente.getOutputStream());
-      sendData();
-    } catch (IOException e) {
-      e.printStackTrace();
-      Logger.getLogger(TimerPanel.class.getName()).log(Level.SEVERE, null, e);
-    }
-  }
+  // public void setCliente(Socket cliente) {
+  // this.cliente = cliente;
+  // try {
+  // this.dataOutputStream = new DataOutputStream(cliente.getOutputStream());
+  // sendData();
+  // } catch (IOException e) {
+  // e.printStackTrace();
+  // Logger.getLogger(TimerPanel.class.getName()).log(Level.SEVERE, null, e);
+  // }
+  // }
 
   public Boolean sendData() {
     try {
-      dataOutputStream.writeUTF(timeFormat.format(this.calendar.getTime()));
-      // dos.close();
+      String hora = timeFormat.format(this.calendar.getTime());
+      byte[] horaByte = hora.getBytes();
+      System.out.println(hora);
+      System.out.println(horaByte);
+      DatagramPacket respuesta = new DatagramPacket(horaByte, horaByte.length, host, port);
+      socket.send(respuesta);
       return true;
     } catch (IOException e) {
       Logger.getLogger(TimerPanel.class.getName()).log(Level.SEVERE, null, e);
       return false;
     }
+  }
+
+  public void setCliente(DatagramSocket socket, InetAddress host, Integer port) {
+    this.host = host;
+    this.port = port;
+    this.socket = socket;
   }
 
 }

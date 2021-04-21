@@ -1,4 +1,4 @@
-package mx.ipn.com.gui;
+package mx.ipn.escom.clocks.client.gui;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -16,7 +16,7 @@ public class TimerLabel extends JLabel implements Runnable {
   public TimerLabel() {
     this.calendar = Calendar.getInstance();
     // setTime(0, 0, second);
-    setFont(new Font("Verdana", Font.PLAIN, 50));
+    setFont(new Font("Verdana", Font.PLAIN, 100));
     setForeground(Color.WHITE);
     setBackground(new Color(0x333272));
     setOpaque(true);

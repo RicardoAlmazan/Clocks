@@ -1,7 +1,10 @@
-package mx.ipn.escom.clocks.gui;
+package mx.ipn.escom.clocks.server.gui;
 
 import java.awt.FlowLayout;
 import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Random;
@@ -20,7 +23,8 @@ public class Container extends JFrame {
   private TimerPanel timer3;
   private TimerPanel timer4;
 
-  private ServerSocket server;
+  // private ServerSocket server;
+  private DatagramSocket server;
 
   public Container() {
     this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -61,22 +65,38 @@ public class Container extends JFrame {
 
   private void startServer() {
     try {
-      server = new ServerSocket(2405);
+      server = new DatagramSocket(2405);
       Integer count = 1;
+      DatagramPacket dato = new DatagramPacket(new byte[100], 100);
       while (true) {
         System.out.println("Esperando cliente... ");
+        server.receive(dato);
+        System.out.println("Recibido dato de " + dato.getAddress() + ":" + dato.getPort() + " : "
+            + new String(dato.getData()) + " No. Cliente: " + count);
 
-        Socket cliente = server.accept();
-        System.out.println("Conexion establecida desde " + cliente.getInetAddress() + ":" + cliente.getPort() + "No. Cliente: " + count);
+        // Socket cliente = server.accept();
+        // System.out.println("Conexion establecida desde " + cliente.getInetAddress() +
+        // ":" + cliente.getPort() + "No. Cliente: " + count);
+        // if (count == 1) {
+        // timer2.setCliente(cliente);
+        // } else if (count == 2) {
+        // timer3.setCliente(cliente);
+        // } else if (count == 3) {
+        // timer4.setCliente(cliente);
+        // } else {
+        // break;
+        // }
+
         if (count == 1) {
-          timer2.setCliente(cliente);
+          timer2.setCliente(server, dato.getAddress(), dato.getPort());
         } else if (count == 2) {
-          timer3.setCliente(cliente);
+          timer3.setCliente(server, dato.getAddress(), dato.getPort());
         } else if (count == 3) {
-          timer4.setCliente(cliente);
+          timer4.setCliente(server, dato.getAddress(), dato.getPort());
         } else {
           break;
         }
+
         count++;
       }
     } catch (IOException e) {
