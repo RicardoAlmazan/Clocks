@@ -247,6 +247,7 @@ public class TimerPanel extends JPanel implements Runnable {
     this.host = host;
     this.port = port;
     this.socket = socket;
+    // sendData();
   }
 
 }

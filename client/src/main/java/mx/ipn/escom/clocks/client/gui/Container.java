@@ -38,23 +38,12 @@ public class Container extends JFrame {
     th.start();
 
     try {
-      String HOST = "127.0.0.1";
-      int PORT_CLIENTE = 2406;
+      String HOST = "3.14.245.171";
       int PORT = 2405;
 
-      cliente = new DatagramSocket(PORT_CLIENTE, InetAddress.getByName(HOST));
+      cliente = new DatagramSocket();
       String dato = "HERE";
       byte[] datoByte = dato.getBytes();
-      // cliente = new Socket(HOST, PORT);
-      // DataInputStream dis = new DataInputStream(cliente.getInputStream());
-      // while (true) {
-      // String time = dis.readUTF();
-      // String[] dataTime = time.split(":");
-
-      // timerLabel.setTime(Integer.parseInt(dataTime[0]),
-      // Integer.parseInt(dataTime[1]), Integer.parseInt(dataTime[2]));
-      // }
-
       DatagramPacket datoDatagram = new DatagramPacket(datoByte, datoByte.length, InetAddress.getByName(HOST), PORT);
       cliente.send(datoDatagram);
 
