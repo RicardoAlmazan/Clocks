@@ -16,7 +16,7 @@ public class TimerLabel extends JLabel implements Runnable {
   public TimerLabel() {
     this.calendar = Calendar.getInstance();
     // setTime(0, 0, second);
-    setFont(new Font("Verdana", Font.PLAIN, 100));
+    setFont(new Font("Verdana", Font.PLAIN, 60));
     setForeground(Color.WHITE);
     setBackground(new Color(0x333272));
     setOpaque(true);
@@ -46,4 +46,8 @@ public class TimerLabel extends JLabel implements Runnable {
     setText(timeFormat.format(this.calendar.getTime()));
   }
 
+  public String getTime(){
+    SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    return timeFormat.format(this.calendar.getTime());
+  }
 }
