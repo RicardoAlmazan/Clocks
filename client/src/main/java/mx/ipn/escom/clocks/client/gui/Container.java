@@ -12,7 +12,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
-
+import java.net.MulticastSocket;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -118,30 +118,32 @@ public class Container extends JFrame {
     this.add(requestPanel, BorderLayout.SOUTH);
 
     th.start();
-    String HOST = "localhost";
-    int PORT = 2405;
+    String HOST_RMI = "localhost";
+    // String HOST = "3.16.67.189";
+    int PORT_RMI = 2405;
     // int PORT_RMI = 2406;
 
+    String HOST_UDP = "230.0.0.1";
+    int PORT_UDP = 2406;
+
     try {
-      Registry reg = LocateRegistry.getRegistry(HOST, PORT);
+      Registry reg = LocateRegistry.getRegistry(HOST_RMI, PORT_RMI);
       libreria = (Libreria) reg.lookup("libreria");
 
       cliente = new DatagramSocket();
-      // String dato = "LIBRO";
-      // byte[] datoByte = dato.getBytes();
-      // DatagramPacket datoDatagram = new DatagramPacket(datoByte, datoByte.length,
-      // InetAddress.getByName(HOST), PORT);
-      // cliente.send(datoDatagram);
 
-      libreria.reiniciarSesion();
+      MulticastSocket socket = new MulticastSocket(PORT_UDP);
+      socket.joinGroup(InetAddress.getByName(HOST_UDP));
       while (true) {
-        DatagramPacket horaDG = new DatagramPacket(new byte[100], 100);
-        cliente.receive(horaDG);
-        String time = new String(horaDG.getData()).trim();
-        System.out.println("Recibido: " + time + " de " + horaDG.getAddress() + ":" + horaDG.getPort());
-        String[] dataTime = time.split(":");
+        byte[] dato = new byte[1024];
+        DatagramPacket packet = new DatagramPacket(dato, dato.length);
+        socket.receive(packet);
+        String msg = new String(packet.getData(), packet.getOffset(), packet.getLength());
 
-        timerLabel.setTime(Integer.parseInt(dataTime[0]), Integer.parseInt(dataTime[1]), Integer.parseInt(dataTime[2]));
+        if ("REINICIAR".equals(msg)) {
+          JOptionPane.showMessageDialog(null, "Se ha reiniciado la sesión del lado del servidor.");
+          restart();
+        }
       }
 
     } catch (IOException | NotBoundException ex) {
@@ -159,5 +161,13 @@ public class Container extends JFrame {
     this.bookAuthorLabelValue.setText(libro.getAutor());
     this.bookEditorialLabelValue.setText(libro.getEditorial());
     this.bookPriceLabelValue.setText(libro.getPrecio() + "");
+  }
+
+  public void restart() {
+    this.bookNISBNLabelValue.setText("");
+    this.bookNameLabelValue.setText("");
+    this.bookAuthorLabelValue.setText("");
+    this.bookEditorialLabelValue.setText("");
+    this.bookPriceLabelValue.setText("");
   }
 }

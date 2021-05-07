@@ -1,11 +1,17 @@
 package mx.ipn.escom.clocks.server.gui;
 
 import java.awt.BorderLayout;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -16,10 +22,11 @@ import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 
-import mx.ipn.escom.clocks.common.model.Libro;
 import mx.ipn.escom.clocks.server.dao.LibroRepository;
 import mx.ipn.escom.clocks.server.ldn.LibreriaRemote;
 
@@ -31,6 +38,7 @@ public class Container extends JFrame {
   private TimerPanel timer1;
   private JLabel portadaContainer;
   private BufferedImage portada;
+  private JButton restartSession;
 
   private Integer idSesion;
 
@@ -59,11 +67,15 @@ public class Container extends JFrame {
     Thread t1 = new Thread(timer1);
     this.add(timer1, BorderLayout.NORTH);
 
-    try {
-      this.idSesion = this.libroRepository.getNuevaSesion(timer1.getTime());
-    } catch (SQLException e1) {
-      e1.printStackTrace();
-    }
+    this.restartSession = new JButton("REINICIAR");
+    this.restartSession.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        nuevaSesion(true);
+      }
+    });
+
+    this.add(this.restartSession, BorderLayout.SOUTH);
 
     try {
       portada = ImageIO.read(new File("./resources/libros/books.jpg"));
@@ -73,7 +85,6 @@ public class Container extends JFrame {
       e.printStackTrace();
     }
 
-    
     try {
       libreriaRemote = new LibreriaRemote(this.libroRepository, this.portadaContainer);
       Registry reg = LocateRegistry.createRegistry(2405);
@@ -85,11 +96,33 @@ public class Container extends JFrame {
     }
 
     t1.start();
-    startServer();
+    // startServer();
+    nuevaSesion(false);
+  }
+
+  private void nuevaSesion(Boolean sendToClients) {
+    try {
+      this.idSesion = this.libroRepository.getNuevaSesion(timer1.getTime());
+      libreriaRemote.setIdSesion(idSesion);
+
+      if (sendToClients) {
+        DatagramSocket socket = new DatagramSocket();
+        InetAddress group = InetAddress.getByName("230.0.0.1");
+        String message = "REINICIAR";
+        byte[] msg = message.getBytes();
+        DatagramPacket packet = new DatagramPacket(msg, msg.length, group, 2406);
+        socket.send(packet);
+        socket.close();
+        JOptionPane.showMessageDialog(null, "Se ha reiniciado la sesión! :)", "Reinicio exitoso.",
+            JOptionPane.INFORMATION_MESSAGE);
+      }
+    } catch (SQLException | IOException e1) {
+      e1.printStackTrace();
+    }
   }
 
   private void startServer() {
-    libreriaRemote.setIdSesion(idSesion);
+    nuevaSesion(false);
     try {
       server = new DatagramSocket(2405);
       DatagramPacket dato = new DatagramPacket(new byte[100], 100);
@@ -106,7 +139,8 @@ public class Container extends JFrame {
           System.out.println("REGISTRAR PEDIDO");
         }
         // Socket cliente = server.accept();
-        // System.out.println("Conexion establecida desde " + cliente.getInetAddress() +
+        // System.out.println("Conexion establecida deDatagramSocket sde " +
+        // cliente.getInetAddress() +
         // ":" + cliente.getPort() + "No. Cliente: " + count);
         // if (count == 1) {
         // timer2.setCliente(cliente);
