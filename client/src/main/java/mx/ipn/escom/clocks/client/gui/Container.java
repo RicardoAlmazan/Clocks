@@ -118,12 +118,13 @@ public class Container extends JFrame {
     this.add(requestPanel, BorderLayout.SOUTH);
 
     th.start();
-    String HOST_RMI = "localhost";
+    // String HOST_RMI = "192.168.1.122";
+    String HOST_RMI = "192.168.1.122";
     // String HOST = "3.16.67.189";
     int PORT_RMI = 2405;
     // int PORT_RMI = 2406;
 
-    String HOST_UDP = "230.0.0.1";
+    String HOST_UDP = "192.168.1.254";
     int PORT_UDP = 2406;
 
     try {
